@@ -6,7 +6,7 @@
 #include "InputData.h"
 #include "TrafficModel.h"
 
-SLane LaneInfo;
+SLane LaneInfo; 
 SObstacleInfo Obs;
 SObstacle OBS;
 

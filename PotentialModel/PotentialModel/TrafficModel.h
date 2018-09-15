@@ -114,11 +114,21 @@ struct FrenetLaneMark
 	FrenetLaneLine		FrenetLineR1;			//车体参考点右侧第一根
 	FrenetLaneLine		FrenetLineL1;			//车体参考点左侧第一根
 	FrenetLaneLine		FrenetLineL2;			//车体参考点左侧第二根
-	
-
-
 };
-
+struct VelocityModel 
+{
+	float TargetSpeed;
+	float a;
+	float Speed;
+	float Reala;
+	VelocityModel()
+	{
+		TargetSpeed=0;
+		a=0;
+		Speed=0;
+		Reala=0;
+	}
+};
 class TrafficModel
 {
 public:
@@ -132,6 +142,8 @@ public:
 	int vehNum;
 	int humanNum;
 	int staticObsNum;
+	vector<VelocityModel> VelocityFile;
+
 	TrafficModel(void);
 	~TrafficModel(void);
 
@@ -162,6 +174,8 @@ public:
 	BOOL OptPolicy(vector<vector< TreeNode >> &TreeMap,vector<TreeNode> &OptNode);//最优路径点搜索
 
 	void Fitting(vector<fPoint> Samples, double* a, int nParam);//曲线拟合
+	int ReadVelocityFile(const string &FileName);
+	
 };
 
 

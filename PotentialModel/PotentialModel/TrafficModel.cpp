@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "TrafficModel.h"
 #include<cmath>
 #include<vector>
@@ -25,17 +25,17 @@ TrafficModel::~TrafficModel(void)
   BOOL TrafficModel::TrafficSetting(SLane &LineInfo,SObstacle &ObsInfo,FrenetLaneMark &LaneMark)
   {
 	  
-	  if (LineInfo.IsOK==FALSE)//ÅĞ¶Ï³µµÀÏßÊÇ·ñÓĞĞ§
+	  if (LineInfo.IsOK==FALSE)//åˆ¤æ–­è½¦é“çº¿æ˜¯å¦æœ‰æ•ˆ
 		  return FALSE;
 	  LaneMark.LaneWidth=LineInfo.LaneWidth;
 
 	  SLaneLine DKBaseLine;
-	  memset(&DKBaseLine,0,sizeof(DKBaseLine));//frenet×ø±êÏµ»ù×¼Ïß
+	  memset(&DKBaseLine,0,sizeof(DKBaseLine));//frenetåæ ‡ç³»åŸºå‡†çº¿
 
 	  memset(&LaneMark,0,sizeof(FrenetLaneMark));
 	
 
-	  if (  LineInfo.LaneNo==3 || LineInfo.LaneNo==2)//ÌôÑ¡×îÓÒ²à³µµÀÏßÎª»ù×¼Ïß
+	  if (  LineInfo.LaneNo==3 || LineInfo.LaneNo==2)//æŒ‘é€‰æœ€å³ä¾§è½¦é“çº¿ä¸ºåŸºå‡†çº¿
 	  {
 		  memcpy(&DKBaseLine,&LineInfo.LineR2,sizeof(LineInfo.LineR2));
 		  if(LineInfo.LineR2.IsOK)
@@ -94,7 +94,7 @@ TrafficModel::~TrafficModel(void)
 
   BOOL TrafficModel::GetFrenetBaseLine(SLaneLine &line, FrenetLaneLine &FrenetLine)
   {
-	  vector<fPoint> samples;//ÇúÏßÄâºÏ»ù±¾²ÉÑùµã
+	  vector<fPoint> samples;//æ›²çº¿æ‹ŸåˆåŸºæœ¬é‡‡æ ·ç‚¹
 	  FrenetLine.IsOk = TRUE;
 
 	  int LinePointNum = line.ValidNum;
@@ -208,9 +208,9 @@ TrafficModel::~TrafficModel(void)
   BOOL TrafficModel::GetFrenetObs(SObstacle &Obs,SLaneLine &DKBaseLine,FrenetLaneMark &FrenetLine)
   {  
 
-	  FrenetObsVeh      TempObsVeh;            //ÕÏ°­³µĞÅÏ¢
-	  FrenetObsHuman    TempObsHuman;         //ĞĞÈË
-	  FrenetStaticObs    TempStaticObs;       //¾²Ì¬ÓïÒåÕÏ°­Îï
+	  FrenetObsVeh      TempObsVeh;            //éšœç¢è½¦ä¿¡æ¯
+	  FrenetObsHuman    TempObsHuman;         //è¡Œäºº
+	  FrenetStaticObs    TempStaticObs;       //é™æ€è¯­ä¹‰éšœç¢ç‰©
 
 
 	  fPoint A;
@@ -339,7 +339,7 @@ TrafficModel::~TrafficModel(void)
   {
 	  float left_d,right_d,left_A,right_A;
 	  int idx,point_Laneidx;
-	  int samples=100;  //³µµÀÏß²ÉÑùµã¸öÊıÒ»¶¨£¬Îª100£¬µ«µãÓëµãÖ®¼äµÄ¼ä¾à²»È·¶¨
+	  int samples=100;  //è½¦é“çº¿é‡‡æ ·ç‚¹ä¸ªæ•°ä¸€å®šï¼Œä¸º100ï¼Œä½†ç‚¹ä¸ç‚¹ä¹‹é—´çš„é—´è·ä¸ç¡®å®š
 	  point_Laneidx=ceil(node.d/LaneMark.LaneWidth);
 	  if(node.d==0)point_Laneidx=1;
 
@@ -401,8 +401,8 @@ TrafficModel::~TrafficModel(void)
 
   float TrafficModel::DynamicLaneRightCost(TreeNode &node,TrafficModel &Trafficmodel,FrenetLaneMark &LaneMark,AutoVeh &veh)
   {
-	  int samples=100;  //³µµÀÏß²ÉÑùµã¸öÊıÒ»¶¨£¬Îª100£¬µ«µãÓëµãÖ®¼äµÄ¼ä¾à²»È·¶¨
-	  int point_Laneidx=ceil(node.d/LaneMark.LaneWidth);  //µãËùÔÚ³µµÀºÅ
+	  int samples=100;  //è½¦é“çº¿é‡‡æ ·ç‚¹ä¸ªæ•°ä¸€å®šï¼Œä¸º100ï¼Œä½†ç‚¹ä¸ç‚¹ä¹‹é—´çš„é—´è·ä¸ç¡®å®š
+	  int point_Laneidx=ceil(node.d/LaneMark.LaneWidth);  //ç‚¹æ‰€åœ¨è½¦é“å·
 	  if(node.d==0)point_Laneidx=1;
 	  vector< vector<float> >refline;
 	  vector<float>a(3);
@@ -410,7 +410,7 @@ TrafficModel::~TrafficModel(void)
 	  refline.push_back(b);
 	  refline.push_back(a);
 	  
-	  for(int i=0;i<samples;i++)   //reflineÖĞ´æ´¢µÄÎªµãËùÔÚ³µµÀÖĞÏßĞÅÏ¢
+	  for(int i=0;i<samples;i++)   //reflineä¸­å­˜å‚¨çš„ä¸ºç‚¹æ‰€åœ¨è½¦é“ä¸­çº¿ä¿¡æ¯
 	  {
 		  refline[i][1]= FrenetLane[point_Laneidx].FrenetLinePT[i].s;
 		  refline[i][2]=( FrenetLane[point_Laneidx].FrenetLinePT[i].d+FrenetLane[point_Laneidx+1].FrenetLinePT[i].d)/2;
@@ -418,15 +418,15 @@ TrafficModel::~TrafficModel(void)
 	  }
 	  
 	  float p,dynamiccost=0,dynamic_cost=0;
-	  int vehNum=vehNum;   //ÕÏ°­³µÁ¾ÊıÄ¿
+	  int vehNum=vehNum;   //éšœç¢è½¦è¾†æ•°ç›®
 
 	  for(int i=0;i<vehNum;i++) 
 	  {
 		 ObsVeh[i].ObsLaneNo=ceil(ObsVeh[i].d/LaneMark.LaneWidth);
-		 if(point_Laneidx==ObsVeh[i].ObsLaneNo)   //Èç¹ûÕÏ°­³µÁ¾ºÍµãÔÚÒ»Ìõ³µµÀÉÏÔò¼ÆËãÕÏ°­³µÁ¾¶ÔÓÚ¸ÃµãµÄÕ¼ÓÃÂÊ
+		 if(point_Laneidx==ObsVeh[i].ObsLaneNo)   //å¦‚æœéšœç¢è½¦è¾†å’Œç‚¹åœ¨ä¸€æ¡è½¦é“ä¸Šåˆ™è®¡ç®—éšœç¢è½¦è¾†å¯¹äºè¯¥ç‚¹çš„å ç”¨ç‡
 		 {
-			 p=DynamicOccupancy(node,ObsVeh[i],veh,refline,samples);   //Ò»´Î¼ÆËãÒ»¸öÕÏ°­³µÁ¾ÔÚ¸ÃµãµÄÕ¼ÓÃÂÊ
-			 if(dynamiccost<p)dynamiccost=p;    //È¡×î´ó×÷Îª×îÖÕÕ¼ÓÃÂÊ
+			 p=DynamicOccupancy(node,ObsVeh[i],veh,refline,samples);   //ä¸€æ¬¡è®¡ç®—ä¸€ä¸ªéšœç¢è½¦è¾†åœ¨è¯¥ç‚¹çš„å ç”¨ç‡
+			 if(dynamiccost<p)dynamiccost=p;    //å–æœ€å¤§ä½œä¸ºæœ€ç»ˆå ç”¨ç‡
 		 }
 	  }
 		  
@@ -440,34 +440,34 @@ TrafficModel::~TrafficModel(void)
   {
       float safedis=4;
 	  float p,t;
-	  float t_obsmax=2.2;  //×î´ó·´Ó¦Ê±¼ä
+	  float t_obsmax=2.2;  //æœ€å¤§ååº”æ—¶é—´
 	  float t_obsmin=1.2;
 	  float t_obsmid=(t_obsmax+t_obsmin)/2;
 	  float t_vehmax=1.1;
 	  float t_vehmin=0.3;
 	  float t_vehmid=(t_vehmax+t_vehmin)/2;
 
-	  float a_min=-4;  //×î´ó¼õËÙ¶È
+	  float a_min=-4;  //æœ€å¤§å‡é€Ÿåº¦
 	  if ((node.s>=Obsveh.s-Obsveh.len/2-veh.l_f-safedis)&&(node.s<=Obsveh.s+Obsveh.len/2+veh.l_r+safedis)) p=1.1;
 	  else
-		  if (node.s>Obsveh.s+Obsveh.len/2+veh.l_r)   //ÎŞÈË³µÔÚÇ°
+		  if (node.s>Obsveh.s+Obsveh.len/2+veh.l_r)   //æ— äººè½¦åœ¨å‰
 		  {
 			  float c=node.s-Obsveh.s+(pow(Obsveh.v,2)-pow(veh.v,2))/(2*a_min)-Obsveh.len/2-veh.l_r;
 		  
 			  for(int i=0;i<(samples-1);i++)
 			  {
 				  if((refline[i][1]>=Obsveh.s)&&(refline[i][1]<node.s))
-					  c=c-refline[i][3]*refline[i][2]*(refline[i+1][1]-refline[i][1]);  //½«SÖáÉÏ¾àÀë×ª»»Îª³µµÀÖĞÏß¾àÀë
+					  c=c-refline[i][3]*refline[i][2]*(refline[i+1][1]-refline[i][1]);  //å°†Sè½´ä¸Šè·ç¦»è½¬æ¢ä¸ºè½¦é“ä¸­çº¿è·ç¦»
 				  else
 					  if(refline[i][1]>=node.s)break;
 
 			  }
 
 			  t=c/Obsveh.v;
-			  if(t<t_obsmin)p=1;  //tĞ¡ÓÚ×î¶Ì·´Ó¦Ê±¼ä£¬Ò»¶¨Åö×²
-			  if((t>=t_obsmin)&&(t<t_obsmid))p=1-ReactionProb(t,t_obsmax,t_obsmin)*(t-t_obsmin)/2;  //ReactionProbµÃµ½t¶ÔÓ¦µÄ¸ÅÂÊÃÜ¶Èº¯ÊıÉÏµÄÖµ½ø¶øÇóµÃÅö×²¸ÅÂÊ
+			  if(t<t_obsmin)p=1;  //tå°äºæœ€çŸ­ååº”æ—¶é—´ï¼Œä¸€å®šç¢°æ’
+			  if((t>=t_obsmin)&&(t<t_obsmid))p=1-ReactionProb(t,t_obsmax,t_obsmin)*(t-t_obsmin)/2;  //ReactionProbå¾—åˆ°tå¯¹åº”çš„æ¦‚ç‡å¯†åº¦å‡½æ•°ä¸Šçš„å€¼è¿›è€Œæ±‚å¾—ç¢°æ’æ¦‚ç‡
 			  if((t>=t_obsmid)&&(t<=t_obsmax))p=ReactionProb(t,t_obsmax,t_obsmin)*(t_obsmax-t)/2;
-			  if(t>t_obsmax)p=0;  //µ±t´óÓÚ×î³¤·´Ó¦Ê±¼äÊ±Ò»¶¨²»Åö×²£¬Åö×²¸ÅÂÊpÎª0
+			  if(t>t_obsmax)p=0;  //å½“tå¤§äºæœ€é•¿ååº”æ—¶é—´æ—¶ä¸€å®šä¸ç¢°æ’ï¼Œç¢°æ’æ¦‚ç‡pä¸º0
 
 		  }
 		  else
@@ -476,14 +476,14 @@ TrafficModel::~TrafficModel(void)
 			  for(int i=0;i<(samples-1);i++)
 			  {
 				  if((refline[i][1]>=node.s)&&(refline[i][1]<Obsveh.s))
-					  c=c-refline[i][3]*refline[i][2]*(refline[i+1][1]-refline[i][1]);  //½«SÖáÉÏ¾àÀë×ª»»Îª³µµÀÖĞÏß¾àÀë
+					  c=c-refline[i][3]*refline[i][2]*(refline[i+1][1]-refline[i][1]);  //å°†Sè½´ä¸Šè·ç¦»è½¬æ¢ä¸ºè½¦é“ä¸­çº¿è·ç¦»
 				  else
 					  if(refline[i][1]>=Obsveh.s)break;
 
 			  }
 			  t=c/veh.v;
 			  if(t<t_vehmin)p=1;
-			  if((t>=t_vehmin)&&(t<t_vehmid))p=1-ReactionProb(t,t_obsmax,t_obsmin)*(t-t_obsmin)/2;   //¸ù¾İ¸ÅÂÊÃÜ¶Èº¯Êı¼ÆËãÅö×²¸ÅÂÊ
+			  if((t>=t_vehmin)&&(t<t_vehmid))p=1-ReactionProb(t,t_obsmax,t_obsmin)*(t-t_obsmin)/2;   //æ ¹æ®æ¦‚ç‡å¯†åº¦å‡½æ•°è®¡ç®—ç¢°æ’æ¦‚ç‡
 			  if((t>=t_vehmid)&&(t<=t_vehmax))p=ReactionProb(t,t_obsmax,t_obsmin)*(t_obsmax-t)/2;
 			  if(t>t_vehmax)p=0;
 		  
@@ -492,7 +492,7 @@ TrafficModel::~TrafficModel(void)
       return p;
   }
 
-  float TrafficModel::ReactionProb(float t,float t_max,float t_min)   //¸ù¾İ¸ÅÂÊÃÜ¶Èº¯Êı¼ÆËãÅö×²¸ÅÂÊ
+  float TrafficModel::ReactionProb(float t,float t_max,float t_min)   //æ ¹æ®æ¦‚ç‡å¯†åº¦å‡½æ•°è®¡ç®—ç¢°æ’æ¦‚ç‡
   {
       float t_mid=(t_max+t_min)/2;
 	  float p_max=2/(t_max-t_min);
@@ -509,31 +509,31 @@ TrafficModel::~TrafficModel(void)
 
   float TrafficModel::StaticLaneRightCost(TreeNode &node,TrafficModel &Trafficmodel,FrenetLaneMark &LaneMark,AutoVeh &veh)
   {
-	  int LaneNum,Staticobs_idx;  //Staticobs_idxÎªÕÏ°­³µÁ¾ËùÔÚ³µµÀºÅ
+	  int LaneNum,Staticobs_idx;  //Staticobs_idxä¸ºéšœç¢è½¦è¾†æ‰€åœ¨è½¦é“å·
 
 	  if(LaneMark.FrenetLineR2.LaneLineNo==1)LaneNum=3;
 	  else LaneNum=2;
 
-	  vector<int>index(LaneNum,0);   //´æ·Å¸÷³µµÀÕÏ°­³µÁ¾ÊıÄ¿,³õÊ¼»¯Îª0
+	  vector<int>index(LaneNum,0);   //å­˜æ”¾å„è½¦é“éšœç¢è½¦è¾†æ•°ç›®,åˆå§‹åŒ–ä¸º0
 	  vector<FrenetStaticObs>Staticobs1;
 	  vector<FrenetStaticObs>Staticobs2;
 	  vector<FrenetStaticObs>Staticobs3;
 	  vector<FrenetStaticObs>LaneObs;
 
-	  int staticObsNum=staticObsNum;  //¾²Ì¬ÓïÒåÕÏ°­ÎïµÄÊıÄ¿
+	  int staticObsNum=staticObsNum;  //é™æ€è¯­ä¹‰éšœç¢ç‰©çš„æ•°ç›®
 
 	  for(int i=0;i<staticObsNum;i++)   
 	  {
-		  Staticobs_idx=ceil(StaticObs[i].d/LaneMark.LaneWidth);  //ÕÏ°­³µÁ¾ËùÔÚ³µµÀºÅ
-		  index[Staticobs_idx]=index[Staticobs_idx]+1;  //¸÷³µµÀÕÏ°­³µÁ¾ÊıÄ¿
+		  Staticobs_idx=ceil(StaticObs[i].d/LaneMark.LaneWidth);  //éšœç¢è½¦è¾†æ‰€åœ¨è½¦é“å·
+		  index[Staticobs_idx]=index[Staticobs_idx]+1;  //å„è½¦é“éšœç¢è½¦è¾†æ•°ç›®
 		  if(Staticobs_idx==1)Staticobs1.push_back(StaticObs[i]);
 		  if(Staticobs_idx==2)Staticobs2.push_back(StaticObs[i]);
 		  if((Staticobs_idx==3)&&(LaneNum==3))Staticobs3.push_back(StaticObs[i]);
 	  
 	  }
 
-	  float Smin=0,Smax=0;  //ËùÓĞÕÏ°­ÎïËùÔÚ·¶Î§µÄÆğµãºÍÖÕµã
-	  int lmin=0,lmax=0;    //ËùÓĞÕÏ°­ÎïËùÔÚ·¶Î§µÄÆğµãºÍÖÕµãËù¶ÔÓ¦µÄË÷ÒıÖµ
+	  float Smin=0,Smax=0;  //æ‰€æœ‰éšœç¢ç‰©æ‰€åœ¨èŒƒå›´çš„èµ·ç‚¹å’Œç»ˆç‚¹
+	  int lmin=0,lmax=0;    //æ‰€æœ‰éšœç¢ç‰©æ‰€åœ¨èŒƒå›´çš„èµ·ç‚¹å’Œç»ˆç‚¹æ‰€å¯¹åº”çš„ç´¢å¼•å€¼
 	  for(int i=0;i<staticObsNum;i++)
 	  {
 		  if(Smin>StaticObs[i].s)Smin=StaticObs[i].s,lmin=i;
@@ -543,7 +543,7 @@ TrafficModel::~TrafficModel(void)
 	  Smax=Smax+StaticObs[lmin].r+veh.l_r+0.5;
 
 
-	  vector< vector<float> >S_flag;   //´æ´¢Ã¿Ìõ³µµÀÏßÉÏÕÏ°­Îï·¶Î§µÄÆğµãºÍÖÕµã
+	  vector< vector<float> >S_flag;   //å­˜å‚¨æ¯æ¡è½¦é“çº¿ä¸Šéšœç¢ç‰©èŒƒå›´çš„èµ·ç‚¹å’Œç»ˆç‚¹
 	  vector<float>a(LaneNum);
 	  vector<float>b(2);
 	  S_flag.push_back(a);
@@ -556,8 +556,8 @@ TrafficModel::~TrafficModel(void)
 		  if((i==3)&&(Staticobs3.size()>0))LaneObs=Staticobs3;
 		  if(LaneObs.size()==0)continue;
 		  
-		  S_flag[i][1]=0;  //ÕÏ°­Îï·¶Î§Æğµã
-		  S_flag[i][2]=0;  //ÕÏ°­Îï·¶Î§ÖÕµã
+		  S_flag[i][1]=0;  //éšœç¢ç‰©èŒƒå›´èµ·ç‚¹
+		  S_flag[i][2]=0;  //éšœç¢ç‰©èŒƒå›´ç»ˆç‚¹
 		  int LaneObs_Num=LaneObs.size();
 
 		  for(int j=0;j<LaneObs_Num;j++)
@@ -581,7 +581,7 @@ TrafficModel::~TrafficModel(void)
 
 	  }
 
-	  int point_Laneidx=ceil(node.d/LaneMark.LaneWidth);  //µãËùÔÚ³µµÀºÅ
+	  int point_Laneidx=ceil(node.d/LaneMark.LaneWidth);  //ç‚¹æ‰€åœ¨è½¦é“å·
 	  if(node.d==0)point_Laneidx=1;
 	  float p,Static_cost;
 
@@ -661,10 +661,10 @@ TrafficModel::~TrafficModel(void)
   }
 
 
-  float TrafficModel::SwerveProb(float v,float p_max,float del_theta)  //·µ»ØĞĞÈËÍ»È»×ªÏòµÄ¸ÅÂÊ
+  float TrafficModel::SwerveProb(float v,float p_max,float del_theta)  //è¿”å›è¡Œäººçªç„¶è½¬å‘çš„æ¦‚ç‡
   {
       float p;
-	  while(del_theta>pi)  //½«del_theta×ª»»µ½[-pi,pi]
+	  while(del_theta>pi)  //å°†del_thetaè½¬æ¢åˆ°[-pi,pi]
 	  {
 	      del_theta = del_theta-2*pi;
 	  }
@@ -712,7 +712,7 @@ TrafficModel::~TrafficModel(void)
 	  return TRUE;
   }
 
-  // ÇúÏßÄâºÏ
+  // æ›²çº¿æ‹Ÿåˆ
   void TrafficModel::Fitting(vector<fPoint> Samples, double* a, int nParam)
   {
 	  int i, j, m, n;
@@ -762,4 +762,56 @@ TrafficModel::~TrafficModel(void)
 		  a[i] = b[i];
 	  }
 	  return;
+  }
+  //---------------------------------------------------------------------------------------
+  // m_vKeyTraQuatÂ m_MapTra_ptrÂ è¯»å–åˆ¶ä½œåœ°å›¾çš„è½¨è¿¹å’Œå…³é”®å¸§å˜æ¢ä¿¡æ¯
+  //---------------------------------------------------------------------------------------
+int ReadVelocityFile(const string &FileName)
+{
+	ifstream ifData;
+	char TraName[200] = "\0";
+	sprintf_s(TraName,"%sRst.txt",FileName.c_str());
+	ifData.open(TraName);
+	if (!ifData)
+	{
+		cout<<"Cannot open the file!"<<endl;
+		exit(-1);
+	}
+	stringstream ss;
+	string tmpStr;
+
+	VelocityModel temp;
+
+
+}
+  {
+
+	  std::stringstreamÂ ss;
+	  std::stringÂ tmpStr;
+
+	  sTraQuatÂ tmpTraQuat;
+	  pcl::PointXYZÂ tmpTraData;
+	  pcl::PointCloud<pcl::PointXYZ>Â TraData;
+	  intÂ nIdÂ =Â 0;
+	  whileÂ (!ifData.eof())
+	  {
+		  getline(ifData,Â tmpStr);
+		  ifÂ (tmpStr.empty())
+		  {
+			  continue;
+		  }
+		  ss.clear();
+		  ss.str(tmpStr);
+		  ssÂ >>Â tmpTraQuat.IdxÂ >>Â tmpTraQuat.txÂ >>Â tmpTraQuat.tyÂ >>Â tmpTraQuat.tz
+			  >>Â tmpTraQuat.qxÂ >>Â tmpTraQuat.qyÂ >>Â tmpTraQuat.qzÂ >>Â tmpTraQuat.qw;
+		  vTraAndQuat.push_back(tmpTraQuat);
+
+		  tmpTraData.xÂ =Â tmpTraQuat.tx;
+		  tmpTraData.yÂ =Â tmpTraQuat.ty;
+		  tmpTraData.zÂ =Â tmpTraQuat.tz;
+		  TraData.push_back(tmpTraData);
+	  }
+	  MapTra_ptr->swap(TraData);
+	  ifData.close();
+	  returnÂ 0;
   }
