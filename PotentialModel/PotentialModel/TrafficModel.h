@@ -114,6 +114,14 @@ struct FrenetLaneMark
 	FrenetLaneLine		FrenetLineR1;			//车体参考点右侧第一根
 	FrenetLaneLine		FrenetLineL1;			//车体参考点左侧第一根
 	FrenetLaneLine		FrenetLineL2;			//车体参考点左侧第二根
+
+	FrenetLaneMark()
+	{
+	    IsOk=FALSE;
+		LaneNo=9;
+		LaneWidth=3.75;
+	}
+
 };
 struct VelocityModel 
 {

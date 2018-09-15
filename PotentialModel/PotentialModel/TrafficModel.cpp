@@ -27,12 +27,11 @@ TrafficModel::~TrafficModel(void)
 	  
 	  if (LineInfo.IsOK==FALSE)//判断车道线是否有效
 		  return FALSE;
+	  memset(&LaneMark,0,sizeof(FrenetLaneMark));
+
 	  LaneMark.LaneWidth=LineInfo.LaneWidth;
 
 	  SLaneLine DKBaseLine;
-	  memset(&DKBaseLine,0,sizeof(DKBaseLine));//frenet坐标系基准线
-
-	  memset(&LaneMark,0,sizeof(FrenetLaneMark));
 	
 
 	  if (  LineInfo.LaneNo==3 || LineInfo.LaneNo==2)//挑选最右侧车道线为基准线

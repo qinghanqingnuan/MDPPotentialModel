@@ -53,16 +53,22 @@ int _tmain(int argc, _TCHAR* argv[])
 	model.veh.s=10;
 	model.veh.theta=0;
 	model.veh.v=7;
-	//model.DynamicLaneRightCost(node,Trafficmodel,LaneMark);
+
+	TreeNode node;
+	node.s=15;
+	node.d=1.5*3.75;
+
+	float lane_cost;
+	//model.DynamicLaneRightCost(node,model,LaneMark);
+	lane_cost=model.LaneMarkCost(node,LaneMark,model);
 	int num=LaneInfo.LineR2.ValidNum;
 	for (int i=0;i<num;i++)
 	{
-		cout<<LaneInfo.LineR2.LinePt[i].x<<"  "<<LaneInfo.LineR2.LinePt[i].y<<endl;
-        Sleep(10);
+		//cout<<LaneInfo.LineR2.LinePt[i].x<<"  "<<LaneInfo.LineR2.LinePt[i].y<<endl;
+		cout<<lane_cost<<endl;
+        //Sleep(10);
+		system("pause");
 	}
-
-
-
 
 
 
