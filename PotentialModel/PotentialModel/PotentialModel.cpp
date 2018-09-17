@@ -15,28 +15,28 @@ int _tmain(int argc, _TCHAR* argv[])
 	LaneSetting(LaneInfo);
 	memset(&OBS,0,sizeof(SObstacle));
 	fPoint obs1;
-	obs1.x=-40;
+	obs1.x=-40;  
 	obs1.y=3.75*2.5;
 	ObsSetting(Obs,obs1,11);
 	Obs.ObstacleID=Vehicle;
 	OBS.Obs[0]=Obs;
 
 	fPoint obs2;
-	obs2.x=10;
+	obs2.x=10;  
 	obs2.y=3.75*2.5;
 	ObsSetting(Obs,obs2,11);
 	Obs.ObstacleID=Vehicle;
 	OBS.Obs[1]=Obs;
 
 	fPoint obs3;
-	obs3.x=50;
+	obs3.x=50;  
 	obs3.y=3.75*2.5;
 	ObsSetting(Obs,obs3,11);
 	Obs.ObstacleID=Vehicle;
 	OBS.Obs[2]=Obs;
 
 	fPoint obs4;
-	obs4.x=25;
+	obs4.x=25;  
 	obs4.y=3.75*1.5;
 	ObsSetting(Obs,obs4,7);
 	Obs.ObstacleID=Vehicle;
@@ -55,19 +55,20 @@ int _tmain(int argc, _TCHAR* argv[])
 	model.veh.v=7;
 
 	TreeNode node;
-	node.s=15;
-	node.d=1.5*3.75;
+	node.s=130;
+	node.d=2.5*3.75;
 
-	float lane_cost;
-	//model.DynamicLaneRightCost(node,model,LaneMark);
-	lane_cost=model.LaneMarkCost(node,LaneMark,model);
+	//float lane_cost;
+	float dynamic_cost;
+	dynamic_cost=model.DynamicLaneRightCost(node,LaneMark);
+	//lane_cost=model.LaneMarkCost(node,LaneMark);  
 	int num=LaneInfo.LineR2.ValidNum;
 	for (int i=0;i<num;i++)
 	{
 		//cout<<LaneInfo.LineR2.LinePt[i].x<<"  "<<LaneInfo.LineR2.LinePt[i].y<<endl;
-		cout<<lane_cost<<endl;
-        //Sleep(10);
-		system("pause");
+		cout<<dynamic_cost<<endl;
+        Sleep(10);
+		//system("pause");
 	}
 
 

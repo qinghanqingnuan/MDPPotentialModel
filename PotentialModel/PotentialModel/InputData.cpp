@@ -10,6 +10,7 @@ void LaneSetting(SLane &Lane)
 {
 	Lane.IsOK=TRUE;
 	Lane.LaneNo=2;
+    Lane.LaneWidth=3.75;
 	lineSetting(Lane.LineR2,0,2);
 	lineSetting(Lane.LineR1,3.75,1);
 	lineSetting(Lane.LineL1,7.5,1);

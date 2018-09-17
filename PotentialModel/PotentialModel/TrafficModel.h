@@ -167,14 +167,14 @@ public:
 
 
 	float SigFunc(float x,float p,float x0);
-	float DynamicOccupancy(TreeNode &node,FrenetObsVeh &Obsveh,AutoVeh &veh,vector< vector<float> >refline,int samples);
+	float DynamicOccupancy(TreeNode &node,FrenetObsVeh &Obsveh,AutoVeh &veh, vector< vector<float> >refline,int samples);
 	float ReactionProb(float t,float t_max,float t_min);
 	float StaticOccupancy(TreeNode &node,FrenetStaticObs  StaticObs[],int staticObsNum);
 	float SwerveProb(float v,float p_max,float del_theta);
-	float LaneMarkCost(TreeNode &node,FrenetLaneMark &LaneMark,TrafficModel &Trafficmodel);//车道线势场计算
-	float DynamicLaneRightCost(TreeNode &node,TrafficModel &Trafficmodel,FrenetLaneMark &LaneMark,AutoVeh &veh);//动态车道占据势场
-	float StaticLaneRightCost(TreeNode &node,TrafficModel &Trafficmodel,FrenetLaneMark &LaneMark,AutoVeh &veh);//静态车道占据势场
-	float HumanCost(TreeNode &node, TrafficModel &Trafficmodel);//行人占据势场
+	float LaneMarkCost(TreeNode &node,FrenetLaneMark &LaneMark);//车道线势场计算
+	float DynamicLaneRightCost(TreeNode &node,FrenetLaneMark &LaneMark);//动态车道占据势场
+	float StaticLaneRightCost(TreeNode &node,FrenetLaneMark &LaneMark);//静态车道占据势场
+	float HumanCost(TreeNode &node);//行人占据势场
 
 	float GetStepDis(vector<float> &velocity,int LayerIndex);//获取某一层的步长
 	BOOL GetTreeMap(vector<vector< TreeNode >> &TreeMap);//构建状态树

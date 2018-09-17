@@ -334,10 +334,10 @@ TrafficModel::~TrafficModel(void)
 	  return TRUE;
   }
 
- float TrafficModel::LaneMarkCost(TreeNode &node,FrenetLaneMark &LaneMark,TrafficModel &Trafficmodel)
+ float TrafficModel::LaneMarkCost(TreeNode &node,FrenetLaneMark &LaneMark)
   {
-	  float left_d,right_d,left_A,right_A;
-	  int idx,point_Laneidx;
+	  float left_d=0,right_d=0,left_A=0,right_A=0;
+	  int idx=0,point_Laneidx=0;
 	  int samples=100;  //车道线采样点个数一定，为100，但点与点之间的间距不确定
 	  point_Laneidx=ceil(node.d/LaneMark.LaneWidth);
 	  if(node.d==0)point_Laneidx=1;
@@ -351,24 +351,24 @@ TrafficModel::~TrafficModel(void)
 		 }
 	  }
 
-	  left_d= FrenetLane[point_Laneidx+1].FrenetLinePT[idx].d-node.d;
-	  right_d=node.d- FrenetLane[point_Laneidx].FrenetLinePT[idx].d;
+	  left_d= FrenetLane[point_Laneidx].FrenetLinePT[idx].d-node.d;
+	  right_d=node.d- FrenetLane[point_Laneidx-1].FrenetLinePT[idx].d;
 
-	  if( FrenetLane[point_Laneidx+1].FrenetLinePT[idx].type==0)
+	  if( FrenetLane[point_Laneidx].FrenetLinePT[idx].type==0)
 		  left_A=50;
 	  else
 		  { 
-			if( FrenetLane[point_Laneidx+1].FrenetLinePT[idx].type==1)
+			if( FrenetLane[point_Laneidx].FrenetLinePT[idx].type==1)
 			    left_A=75;
 		    else
 			    left_A=95;
 	      }
 
-	  if( FrenetLane[point_Laneidx].FrenetLinePT[idx].type==0)
+	  if( FrenetLane[point_Laneidx-1].FrenetLinePT[idx].type==0)
 		  right_A=50;
 	  else
 		  { 
-			if( FrenetLane[point_Laneidx].FrenetLinePT[idx].type==1)
+			if( FrenetLane[point_Laneidx-1].FrenetLinePT[idx].type==1)
 			    right_A=75;
 		    else
 			    right_A=95;
@@ -377,13 +377,13 @@ TrafficModel::~TrafficModel(void)
 	  float q=-1;
 	  float cost_left,cost_right,lanemark_cost;
 	  float width=LaneMark.LaneWidth;
-	  cost_left=SigFunc(left_d,q,width);
-	  cost_right=SigFunc(right_d,q,width);
+	  cost_left=SigFunc(left_d,q,width)*left_A;
+	  cost_right=SigFunc(right_d,q,width)*right_A;
 
 	  if(left_d==0) cost_right=0;
 	  if(right_d==0) cost_left=0;
 
-	  lanemark_cost=cost_left+cost_right;
+	  lanemark_cost=cost_left+cost_right;  //最大值75
 
 	  return lanemark_cost;
   }
@@ -398,26 +398,21 @@ TrafficModel::~TrafficModel(void)
   }
 
 
-  float TrafficModel::DynamicLaneRightCost(TreeNode &node,TrafficModel &Trafficmodel,FrenetLaneMark &LaneMark,AutoVeh &veh)
+  float TrafficModel::DynamicLaneRightCost(TreeNode &node,FrenetLaneMark &LaneMark)
   {
-	  int samples=100;  //车道线采样点个数一定，为100，但点与点之间的间距不确定
+	  int samples=600;  //车道线采样点个数一定，比赛期间为100个，但点与点之间的间距不确定
 	  int point_Laneidx=ceil(node.d/LaneMark.LaneWidth);  //点所在车道号
 	  if(node.d==0)point_Laneidx=1;
-	  vector< vector<float> >refline;
-	  vector<float>a(3);
-	  vector<float>b(samples);
-	  refline.push_back(b);
-	  refline.push_back(a);
+	  vector< vector<float> > refline(samples);
 	  
 	  for(int i=0;i<samples;i++)   //refline中存储的为点所在车道中线信息
 	  {
-		  refline[i][1]= FrenetLane[point_Laneidx].FrenetLinePT[i].s;
-		  refline[i][2]=( FrenetLane[point_Laneidx].FrenetLinePT[i].d+FrenetLane[point_Laneidx+1].FrenetLinePT[i].d)/2;
-		  refline[i][3]=FrenetLane[point_Laneidx].FrenetLinePT[i].kappa;
+		  refline[i].push_back(FrenetLane[point_Laneidx-1].FrenetLinePT[i].s);
+		  refline[i].push_back((FrenetLane[point_Laneidx-1].FrenetLinePT[i].d+FrenetLane[point_Laneidx].FrenetLinePT[i].d)/2);
+		  refline[i].push_back(FrenetLane[point_Laneidx-1].FrenetLinePT[i].kappa);
 	  }
 	  
-	  float p,dynamiccost=0,dynamic_cost=0;
-	  int vehNum=vehNum;   //障碍车辆数目
+	  float p=0,dynamiccost=0,dynamic_cost=0;
 
 	  for(int i=0;i<vehNum;i++) 
 	  {
@@ -438,7 +433,7 @@ TrafficModel::~TrafficModel(void)
   float TrafficModel::DynamicOccupancy(TreeNode &node,FrenetObsVeh &Obsveh,AutoVeh &veh,vector< vector<float> >refline,int samples)
   {
       float safedis=4;
-	  float p,t;
+	  float p=0,t=0;
 	  float t_obsmax=2.2;  //最大反应时间
 	  float t_obsmin=1.2;
 	  float t_obsmid=(t_obsmax+t_obsmin)/2;
@@ -447,46 +442,49 @@ TrafficModel::~TrafficModel(void)
 	  float t_vehmid=(t_vehmax+t_vehmin)/2;
 
 	  float a_min=-4;  //最大减速度
-	  if ((node.s>=Obsveh.s-Obsveh.len/2-veh.l_f-safedis)&&(node.s<=Obsveh.s+Obsveh.len/2+veh.l_r+safedis)) p=1.1;
+	  if ((node.s>=(Obsveh.s-Obsveh.len/2-veh.l_f-safedis))&&(node.s<=(Obsveh.s+Obsveh.len/2+veh.l_r+safedis))) p=1.1;
 	  else
-		  if (node.s>Obsveh.s+Obsveh.len/2+veh.l_r)   //无人车在前
-		  {
-			  float c=node.s-Obsveh.s+(pow(Obsveh.v,2)-pow(veh.v,2))/(2*a_min)-Obsveh.len/2-veh.l_r;
+	  {	
+		 if (node.s>(Obsveh.s+Obsveh.len/2+veh.l_r))   //点在障碍车前
+		 {
+			float c=node.s-Obsveh.s+(pow(Obsveh.v,2)-pow(veh.v,2))/(2*a_min)-Obsveh.len/2-veh.l_r;
 		  
-			  for(int i=0;i<(samples-1);i++)
-			  {
-				  if((refline[i][1]>=Obsveh.s)&&(refline[i][1]<node.s))
-					  c=c-refline[i][3]*refline[i][2]*(refline[i+1][1]-refline[i][1]);  //将S轴上距离转换为车道中线距离
-				  else
-					  if(refline[i][1]>=node.s)break;
+			for(int i=0;i<(samples-1);i++)
+			{
+				if((refline[i][0]>=Obsveh.s)&&(refline[i][1]<node.s))
+					c=c-refline[i][2]*refline[i][1]*(refline[i+1][0]-refline[i][0]);  //将S轴上距离转换为车道中线距离
+				else
+					if(refline[i][0]>=node.s)break;
 
-			  }
+			}
 
-			  t=c/Obsveh.v;
-			  if(t<t_obsmin)p=1;  //t小于最短反应时间，一定碰撞
-			  if((t>=t_obsmin)&&(t<t_obsmid))p=1-ReactionProb(t,t_obsmax,t_obsmin)*(t-t_obsmin)/2;  //ReactionProb得到t对应的概率密度函数上的值进而求得碰撞概率
-			  if((t>=t_obsmid)&&(t<=t_obsmax))p=ReactionProb(t,t_obsmax,t_obsmin)*(t_obsmax-t)/2;
-			  if(t>t_obsmax)p=0;  //当t大于最长反应时间时一定不碰撞，碰撞概率p为0
+			t=c/Obsveh.v;
+			if(t<t_obsmin)p=1;  //t小于最短反应时间，一定碰撞
+			if((t>=t_obsmin)&&(t<t_obsmid))p=1-ReactionProb(t,t_obsmax,t_obsmin)*(t-t_obsmin)/2;  //ReactionProb得到t对应的概率密度函数上的值进而求得碰撞概率
+			if((t>=t_obsmid)&&(t<=t_obsmax))p=ReactionProb(t,t_obsmax,t_obsmin)*(t_obsmax-t)/2;
+			if(t>t_obsmax)p=0;  //当t大于最长反应时间时一定不碰撞，碰撞概率p为0
 
-		  }
-		  else
-		  {
-			  float c=Obsveh.s-node.s+(pow(veh.v,2)-pow(Obsveh.v,2))/(2*a_min)-Obsveh.len/2-veh.l_f-safedis;
-			  for(int i=0;i<(samples-1);i++)
-			  {
-				  if((refline[i][1]>=node.s)&&(refline[i][1]<Obsveh.s))
-					  c=c-refline[i][3]*refline[i][2]*(refline[i+1][1]-refline[i][1]);  //将S轴上距离转换为车道中线距离
-				  else
-					  if(refline[i][1]>=Obsveh.s)break;
+		 }
 
-			  }
-			  t=c/veh.v;
-			  if(t<t_vehmin)p=1;
-			  if((t>=t_vehmin)&&(t<t_vehmid))p=1-ReactionProb(t,t_obsmax,t_obsmin)*(t-t_obsmin)/2;   //根据概率密度函数计算碰撞概率
-			  if((t>=t_vehmid)&&(t<=t_vehmax))p=ReactionProb(t,t_obsmax,t_obsmin)*(t_obsmax-t)/2;
-			  if(t>t_vehmax)p=0;
+		 else  //障碍车在前
+		 {
+			float c=Obsveh.s-node.s+(pow(veh.v,2)-pow(Obsveh.v,2))/(2*a_min)-Obsveh.len/2-veh.l_f-safedis;
+			for(int i=0;i<(samples-1);i++)
+			{
+				if((refline[i][0]>=node.s)&&(refline[i][0]<Obsveh.s))
+					c=c-refline[i][2]*refline[i][1]*(refline[i+1][0]-refline[i][0]);  //将S轴上距离转换为车道中线距离
+				else
+					if(refline[i][0]>=Obsveh.s)break;
+
+			}
+			t=c/veh.v;
+			if(t<t_vehmin)p=1;
+			if((t>=t_vehmin)&&(t<t_vehmid))p=1-ReactionProb(t,t_obsmax,t_obsmin)*(t-t_obsmin)/2;   //根据概率密度函数计算碰撞概率
+			if((t>=t_vehmid)&&(t<=t_vehmax))p=ReactionProb(t,t_obsmax,t_obsmin)*(t_obsmax-t)/2;
+			if(t>t_vehmax)p=0;
 		  
-		  }
+		 }
+	  }
 
       return p;
   }
@@ -506,7 +504,7 @@ TrafficModel::~TrafficModel(void)
   }
 
 
-  float TrafficModel::StaticLaneRightCost(TreeNode &node,TrafficModel &Trafficmodel,FrenetLaneMark &LaneMark,AutoVeh &veh)
+  float TrafficModel::StaticLaneRightCost(TreeNode &node,FrenetLaneMark &LaneMark)
   {
 	  int LaneNum,Staticobs_idx;  //Staticobs_idx为障碍车辆所在车道号
 
@@ -624,7 +622,7 @@ TrafficModel::~TrafficModel(void)
   }
 
 
-  float TrafficModel::HumanCost(TreeNode &node, TrafficModel &Trafficmodel)
+  float TrafficModel::HumanCost(TreeNode &node)
   {
 	  float t_auto=0.7;
 	  float t_hum=1.7;
@@ -776,41 +774,41 @@ int ReadVelocityFile(const string &FileName)
 		cout<<"Cannot open the file!"<<endl;
 		exit(-1);
 	}
-	stringstream ss;
+	//stringstream ss;
 	string tmpStr;
 
 	VelocityModel temp;
 
 
 }
-  {
+  //{
 
-	  std::stringstream ss;
-	  std::string tmpStr;
+	 // std::stringstream ss;
+	 // std::string tmpStr;
 
-	  sTraQuat tmpTraQuat;
-	  pcl::PointXYZ tmpTraData;
-	  pcl::PointCloud<pcl::PointXYZ> TraData;
-	  int nId = 0;
-	  while (!ifData.eof())
-	  {
-		  getline(ifData, tmpStr);
-		  if (tmpStr.empty())
-		  {
-			  continue;
-		  }
-		  ss.clear();
-		  ss.str(tmpStr);
-		  ss >> tmpTraQuat.Idx >> tmpTraQuat.tx >> tmpTraQuat.ty >> tmpTraQuat.tz
-			  >> tmpTraQuat.qx >> tmpTraQuat.qy >> tmpTraQuat.qz >> tmpTraQuat.qw;
-		  vTraAndQuat.push_back(tmpTraQuat);
+	 // sTraQuat tmpTraQuat;
+	 // pcl::PointXYZ tmpTraData;
+	 // pcl::PointCloud<pcl::PointXYZ> TraData;
+	 // int nId = 0;
+	 // while (!ifData.eof())
+	 // {
+		//  getline(ifData, tmpStr);
+		//  if (tmpStr.empty())
+		//  {
+		//	  continue;
+		//  }
+		//  ss.clear();
+		//  ss.str(tmpStr);
+		//  ss >> tmpTraQuat.Idx >> tmpTraQuat.tx >> tmpTraQuat.ty >> tmpTraQuat.tz
+		//	  >> tmpTraQuat.qx >> tmpTraQuat.qy >> tmpTraQuat.qz >> tmpTraQuat.qw;
+		//  vTraAndQuat.push_back(tmpTraQuat);
 
-		  tmpTraData.x = tmpTraQuat.tx;
-		  tmpTraData.y = tmpTraQuat.ty;
-		  tmpTraData.z = tmpTraQuat.tz;
-		  TraData.push_back(tmpTraData);
-	  }
-	  MapTra_ptr->swap(TraData);
-	  ifData.close();
-	  return 0;
-  }
+		//  tmpTraData.x = tmpTraQuat.tx;
+		//  tmpTraData.y = tmpTraQuat.ty;
+		//  tmpTraData.z = tmpTraQuat.tz;
+		//  TraData.push_back(tmpTraData);
+	 // }
+	 // MapTra_ptr->swap(TraData);
+	 // ifData.close();
+	 // return 0;
+  //}
